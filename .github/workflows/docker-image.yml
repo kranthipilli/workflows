@@ -26,7 +26,7 @@ jobs:
       run: docker push ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
   
   deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted    
     needs: build
 
     steps:
