@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: check cli version
+      run: aws --version
     -  name: login to AWS ECR
        run: 
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
