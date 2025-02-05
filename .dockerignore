@@ -1,0 +1,27 @@
+# Ignore node modules
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ignore logs
+logs
+*.log
+*.out
+
+# Ignore environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Ignore build directories
+dist
+build
+
+# Ignore Docker files that shouldn’t be in the image
+.dockerignore
+Dockerfile
+
+# Ignore version control directories
+.git
+.gitignore
