@@ -46,7 +46,7 @@ jobs:
         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}
 
     - name: Pull the latest Docker image
-      run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+      run: docker pull ${{ secrets.AWS_ACCOUNT_ID }} ${{ secrets.AWS_REPOSITORY_NAME }}:latest
 
     - name: Stop the running container 
       run: docker stop ${{ secrets.AWS_REPOSITORY_NAME }} || true
@@ -56,5 +56,4 @@ jobs:
      
     - name: Run the new container
       run: |
-        docker run -d -p 5173:5173 --name ${{ secrets.AWS_REPOSITORY_NAME }} \
-        ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+        docker run -d -p 5173:3000 --name ${{ secrets.AWS_REPOSITORY_NAME }} ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
