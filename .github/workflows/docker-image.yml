@@ -15,13 +15,13 @@ jobs:
        run: 
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}
     - name: Build Docker Image
       run: docker build -t ${{ secrets.AWS_REPOSITORY_NAME }} .
     - name: Tag Docker Image
-      run: docker tag ${{ secrets.AWS_REPOSITORY_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+      run: docker tag ${{ secrets.AWS_REPOSITORY_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
     - name: Push Docker Image
-      run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+      run: docker push ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
   
   deploy:
     runs-on: self-hosted
@@ -35,8 +35,8 @@ jobs:
       run: 
        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-       aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-
+       aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}
+       
     - name:
       run:
        docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
@@ -47,5 +47,5 @@ jobs:
     - name: remove the running container
       run: docker rm ${{ secrets.AWS_REPOSITORY_NAME }} || true
      
-    - name: run the new container
-      run: docker run -d -p 5173:5173 --name ${{ secrets.AWS_REPOSITORY_NAME }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+    - name: run the new container  in aws
+      run: docker run -d -p 5173:5173 --name ${{ secrets.AWS_REPOSITORY_NAME }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
