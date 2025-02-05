@@ -56,4 +56,4 @@ jobs:
      
     - name: Run the new container
       run: |
-        docker run -d -p 3000:3000 --name ${{ secrets.AWS_REPOSITORY_NAME }} ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+        docker run -d -p 3000:3000 --name react-app ${{ secrets.AWS_ACCOUNT_ID }}/react-app:latest
