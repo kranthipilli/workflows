@@ -11,22 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: check cli version
+    - name: Check AWS CLI Version
       run: aws --version
-    -  name: login to AWS ECR
-       run: 
-        
-        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{secrets.AWS_ACCOUNT_ID}}
-        # aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}
+
+    - name: Login to AWS ECR
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
     - name: Build Docker Image
       run: docker build -t ${{ secrets.AWS_REPOSITORY_NAME }} .
+
     - name: Tag Docker Image
-      run: docker tag ${{ secrets.AWS_REPOSITORY_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+      run: docker tag ${{ secrets.AWS_REPOSITORY_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+
     - name: Push Docker Image
-      run: docker push ${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
-  
+      run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+
   deploy:
     runs-on: self-hosted    
     needs: build
@@ -34,22 +36,23 @@ jobs:
     steps:
     - name: Deploy the Docker Image
       run: echo "::set-output name=build_number::${{ github.run_number }}"
-    
-    - name: Login to Amazon ECR 
-      run: 
-       aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-       aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-       aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}
-       
-    - name:
-      run:
-       docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
 
-    - name: stop the running container
+    - name: Login to Amazon ECR
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+    - name: Pull the latest Docker image
+      run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+
+    - name: Stop the running container (if exists)
       run: docker stop ${{ secrets.AWS_REPOSITORY_NAME }} || true
     
-    - name: remove the running container
+    - name: Remove the running container (if exists)
       run: docker rm ${{ secrets.AWS_REPOSITORY_NAME }} || true
      
-    - name: run the new container  in aws
-      run: docker run -d -p 5173:5173 --name ${{ secrets.AWS_REPOSITORY_NAME }}/${{ secrets.AWS_REPOSITORY_NAME }}:latest
+    - name: Run the new container
+      run: |
+        docker run -d -p 5173:5173 --name ${{ secrets.AWS_REPOSITORY_NAME }} \
+        ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
