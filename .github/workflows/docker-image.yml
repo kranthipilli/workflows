@@ -48,10 +48,10 @@ jobs:
     - name: Pull the latest Docker image
       run: docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_REPOSITORY_NAME }}:latest
 
-    - name: Stop the running container (if exists)
+    - name: Stop the running container 
       run: docker stop ${{ secrets.AWS_REPOSITORY_NAME }} || true
     
-    - name: Remove the running container (if exists)
+    - name: Remove the running container
       run: docker rm ${{ secrets.AWS_REPOSITORY_NAME }} || true
      
     - name: Run the new container
