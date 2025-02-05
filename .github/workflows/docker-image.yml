@@ -12,7 +12,7 @@ jobs:
 
     steps:
     -  name: login to AWS ECR
-       run: echo "Logging in to Amazon ECR... ${{ secrets.secrets.AWS_REGION}}" 
+       run: echo "Logging in to Amazon ECR... ${{ secrets.AWS_REGION}}" 
 
       #  run: 
       #   aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
