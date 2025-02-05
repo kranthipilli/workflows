@@ -15,9 +15,11 @@ jobs:
       run: aws --version
     -  name: login to AWS ECR
        run: 
-        aws configure set aws_access_key_id AKIA5CBDQXNC2GFD3WGA
-        aws configure set aws_secret_access_key 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
-        aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin 897722661701.dkr.ecr.eu-north-1.amazonaws.com    
+        
+        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{secrets.AWS_ACCOUNT_ID}}
+        # aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}
     - name: Build Docker Image
       run: docker build -t ${{ secrets.AWS_REPOSITORY_NAME }} .
     - name: Tag Docker Image
