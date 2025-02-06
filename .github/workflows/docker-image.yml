@@ -39,7 +39,7 @@ jobs:
     - name: Deploy the Docker Image
       run: echo "::set-output name=build_number::${{ github.run_number }}"
 
-    - name: Login to Amazon ECR
+    - name: Login into to Amazon ECR
       run: |
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -56,4 +56,4 @@ jobs:
      
     - name: Run the new container
       run: |
-        docker run -d -p 3000:3000 --name react-app ${{ secrets.AWS_ACCOUNT_ID }}/react-app:latest
+        docker run -d -p 3000:3000 --name react-app ${{ secrets.AWS_ACCOUNT_ID }}/react-app:latest 
