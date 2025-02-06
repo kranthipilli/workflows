@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}                  
   ECR_REPOSITORY: ${{ secrets.AWS_REPOSITORY_NAME }}          
-  ECS_SERVICE: reactapp                 
+  ECS_SERVICE: reactapp               
   ECS_CLUSTER: react-app-cluster                 
   ECS_TASK_DEFINITION: .github/workflows/ask-definition.json 
   CONTAINER_NAME: react-app      
