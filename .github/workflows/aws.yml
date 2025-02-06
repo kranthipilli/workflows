@@ -12,6 +12,7 @@ env:
   ECS_TASK_DEFINITION: .github/workflows/ask-definition.json 
   CONTAINER_NAME: react-app      
   IMAGE_TAG: latest   
+  EXECUTION_ROLE_ARN: ${{ secrets.EXECUTIONROLEARN_KEY }}
 
 permissions:
   contents: read
@@ -53,6 +54,7 @@ jobs:
         sed -i 's|${IMAGE_TAG}|${{ env.IMAGE_TAG }}|g' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's|${AWS_ACCESS_KEY_ID}|${{ secrets.AWS_ACCESS_KEY_ID }}|g' ${{ env.ECS_TASK_DEFINITION }}
         sed -i 's|${AWS_SECRET_ACCESS_KEY}|${{ secrets.AWS_SECRET_ACCESS_KEY }}|g' ${{ env.ECS_TASK_DEFINITION }}
+        sed -i 's|${EXECUTION_ROLE_ARN}|${{ secrets.EXECUTIONROLEARN_KEY }}|g' ${{ env.ECS_TASK_DEFINITION }}
 
     - name: Register Amazon ECS Task Definition
       run: |

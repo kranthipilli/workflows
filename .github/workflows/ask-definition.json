@@ -1,5 +1,6 @@
 {
     "family": "react-run-task",
+    "executionRoleArn": "{EXECUTION_ROLE_ARN}",
     "containerDefinitions": [
       {
         "name": "react-app",
