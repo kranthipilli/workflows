@@ -3,7 +3,7 @@
     "containerDefinitions": [
       {
         "name": "react-app",
-        "image": "897722661701.dkr.ecr.eu-north-1.amazonaws.com/react-app",
+        "image": "${ECR_REPOSITORY}:${IMAGE_TAG}",
         "memory": 512,
         "cpu": 256,
         "essential": true,
